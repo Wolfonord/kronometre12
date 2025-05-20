@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kronometre</title>
+<!-- Google Fonts: Cardo -->
+<link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+<style>
+  body, html {
+    margin:0; padding:0; height:100%; width:100%;
+    background: url('background.jpg') center/cover no-repeat;
+    display:flex; justify-content:center; align-items:center;
+    font-family: 'Cardo', serif;
+  }
+  .wrapper {
+    text-align:center; color:#fff;
+  }
+  #timer {
+    font-size:10vw; cursor:pointer;
+    user-select:none;
+  }
+  .controls {
+    margin-top:2vh;
+  }
+  .controls button {
+    background:none; border:none;
+    color:#fff; font-size:3vw; margin:0 3vw;
+    cursor:pointer; text-shadow:0 0 8px rgba(0,0,0,0.7);
+    transition:transform .1s;
+    font-family: 'Cardo', serif;
+  }
+  .controls button:active { transform: scale(0.9); }
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+  #log {
+    position:absolute; bottom:2vh; left:2vw;
+    color:#fff; font-size:1.2vw;
+    max-height:20vh; overflow-y:auto;
+    text-shadow:0 0 4px rgba(0,0,0,0.7);
+    font-family: 'Cardo', serif;
+  }
+  #log div { margin-bottom:0.5vh; }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div id="timer">00:00:00</div>
+    <div class="controls">
+      <button id="start"><i class="fa-solid fa-play"></i></button>
+      <button id="stop"><i class="fa-solid fa-pause"></i></button>
+      <button id="reset"><i class="fa-solid fa-rotate"></i></button>
+    </div>
+    <div id="log"></div>
+  </div>
+<script>
+let h=0,m=0,s=0, running=false, id;
+const timer=document.getElementById('timer'), log=document.getElementById('log');
+function pad(n){return n<10?'0'+n:n;}
+function show(){timer.textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;}
+function logMsg(msg){ const d=document.createElement('div'); d.textContent=msg; log.prepend(d);}
+function start(){
+  if(!running){
+    running=true;
+    logMsg('Başlatıldı → '+new Date().toLocaleTimeString());
+    id=setInterval(()=>{
+      s++; if(s==60){s=0;m++;} if(m==60){m=0;h++;}
+      show();
+    },1000);
+  }
+}
+function stop(){
+  if(running){
+    running=false; clearInterval(id);
+    logMsg('Durduruldu → '+new Date().toLocaleTimeString());
+  }
+}
+function reset(){
+  clearInterval(id); running=false; h=m=s=0; show();
+  logMsg('Sıfırlandı → '+new Date().toLocaleTimeString());
+}
+timer.addEventListener('click', ()=>{
+  if(log.children.length){
+    alert([...log.children].slice(0,5).map(e=>e.textContent).join('\n'));
+  } else alert('Henüz işlem yok.');
+});
+document.getElementById('start').onclick=start;
+document.getElementById('stop').onclick=stop;
+document.getElementById('reset').onclick=reset;
+show();
+</script>
+</body>
+</html>
